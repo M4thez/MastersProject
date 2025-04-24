@@ -2,8 +2,9 @@ import pandas as pd
 import sys  # To exit gracefully on error
 
 # --- Configuration ---
-# Set the path to your Parquet file
-PARQUET_FILE_PATH = 'university_papers_data.parquet'
+# Set the path to the Parquet file
+# Update this path as needed
+PARQUET_FILE_PATH = 'university_papers_data_full.parquet'
 
 # --- Read the Parquet File ---
 print(f"Attempting to read Parquet file: {PARQUET_FILE_PATH}")
