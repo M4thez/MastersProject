@@ -1,3 +1,5 @@
+university_papers_data_full.parquet
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
