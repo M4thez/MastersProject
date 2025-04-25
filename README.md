@@ -11,3 +11,9 @@ open_env\Scripts\activate
 deactivate
 
 pip freeze > requirements.txt
+
+## Links used
+
+### Connecting with OpenSearch via Python library OpenSearch-py
+
+https://docs.opensearch.org/docs/latest/clients/python-low-level/
