@@ -1,31 +1,94 @@
 import os
 import sys
+import logging
+import pandas as pd
+from opensearchpy import OpenSearch, RequestsHttpConnection, helpers, exceptions
 from dotenv import load_dotenv
-from opensearchpy import OpenSearch
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Configuration
-host = 'localhost'
-port = 9200
-
+# Configuration for OpenSearch
 OPENSEARCH_USER = os.getenv('OPENSEARCH_USER')
 OPENSEARCH_PASSWORD = os.getenv('OPENSEARCH_PASSWORD')
-if OPENSEARCH_USER and OPENSEARCH_PASSWORD:
-    auth = (OPENSEARCH_USER, OPENSEARCH_PASSWORD)
-else:
-    auth = None
+OPENSEARCH_SCHEME = 'http'
+OPENSEARCH_PORT = 9200
+OPENSEARCH_HOST = 'localhost'
 
-# Create the client with SSL/TLS and hostname verification disabled.
-client = OpenSearch(
-    hosts=[{'host': host, 'port': port}],
-    http_compress=True,  # enables gzip compression for request bodies
-    http_auth=auth,
-    use_ssl=True,
-    verify_certs=False,
-    ssl_assert_hostname=False,
-    ssl_show_warn=False
+# FILE/INDEX Names
+PARQUET_FILE_PATH = 'papers_clean.parquet'
+INDEX_NAME = 'university_papers'
+
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("pipeline.log"),  # Log to a file
+        logging.StreamHandler(sys.stdout)    # Log to console
+    ]
 )
 
-print(client.info())
+
+def create_opensearch_client():
+    """Creates and configures the OpenSearch client."""
+
+    logging.info(
+        f"Attempting to connect to OpenSearch: {OPENSEARCH_SCHEME}://{OPENSEARCH_HOST}:{OPENSEARCH_PORT}")
+    http_auth = None
+
+    # --- Authentication Setup ---
+    if OPENSEARCH_USER and OPENSEARCH_PASSWORD:
+        http_auth = (OPENSEARCH_USER, OPENSEARCH_PASSWORD)
+        logging.info(
+            f"Using Basic Authentication for user '{OPENSEARCH_USER}'.")
+    else:
+        logging.warning(
+            "OpenSearch username/password not set. Connecting without authentication.")
+
+    # SSL Settings (adjust verify_certs for production)
+    use_ssl = (OPENSEARCH_SCHEME == 'https')
+    verify_certs = use_ssl  # Set to True for production with valid certs
+    ssl_show_warn = use_ssl  # Suppress warnings only if verify_certs is False
+
+    if not verify_certs and use_ssl:
+        logging.warning(
+            "SSL certificate verification is disabled (verify_certs=False). This is insecure for production.")
+
+    try:
+        client = OpenSearch(
+            hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
+            scheme=OPENSEARCH_SCHEME,
+            http_auth=http_auth,
+            http_compress=True,
+            use_ssl=use_ssl,
+            verify_certs=verify_certs,
+            ssl_assert_hostname=verify_certs,  # Disable if verify_certs is False
+            ssl_show_warn=ssl_show_warn,
+            timeout=60,  # Increase timeout for potentially long operations
+        )
+        # Verify connection
+        if not client.ping():
+            raise ConnectionError("OpenSearch ping failed.")
+        logging.info("Successfully connected to OpenSearch.")
+        return client
+    except Exception as e:
+        logging.error(f"Failed to connect to OpenSearch: {e}", exc_info=True)
+        return None
+
+# Main Pipeline Execution
+
+
+def main():
+    """Runs the entire OpenSearch pipeline."""
+    logging.info("--- Starting Pipeline ---")
+
+    # --- Stage 1: Connect to OpenSearch ---
+    opensearch_client = create_opensearch_client()
+    if not opensearch_client:
+        logging.error("Failed to connect to OpenSearch. Exiting.")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
