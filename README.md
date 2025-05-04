@@ -6,9 +6,13 @@ Repository for the Master's degree project by Mateusz Boboryko
 
 ### Python venv - virtual environment
 
+Windows:
 open_env\Scripts\activate
 
 deactivate
+
+Linux:
+source open_env/bin/activate
 
 pip freeze > requirements.txt
 
