@@ -160,7 +160,7 @@ def define_opensearch_mapping():
             },
             "cited_by_count": {
                 "type": "integer",
-                "meta": {"description": "Number of citations received according to OpenAlex."}
+                "meta": {"description": "Number of citations received."}
             },
             "fwci": {
                 "type": "float",
