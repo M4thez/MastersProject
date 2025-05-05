@@ -89,11 +89,9 @@ def define_opensearch_mapping():
             },
             "language": {
                 "type": "keyword",
-                "meta": {"description": "Language code (e.g., 'en')."}
             },
             "type": {
                 "type": "keyword",
-                "meta": {"description": "OpenAlex work type (e.g., 'article', 'book')."}
             },
             "title": {
                 "type": "text",
@@ -103,17 +101,14 @@ def define_opensearch_mapping():
                         "type": "keyword",
                         "ignore_above": 512
                     }
-                },
-                "meta": {"description": "Work title."}
+                }
             },
             "publication_date": {
                 "type": "date",
                 "format": "yyyy-MM-dd",
-                "meta": {"description": "Full publication date."}
             },
             "publication_year": {
                 "type": "integer",
-                "meta": {"description": "Year of publication."}
             },
             "open_access": {
                 "properties": {
@@ -131,7 +126,6 @@ def define_opensearch_mapping():
                         "index": False
                     }
                 },
-                "meta": {"description": "Object containing Open Access status details."}
             },
             "institutions": {
                 "type": "keyword",
@@ -142,7 +136,6 @@ def define_opensearch_mapping():
                         "ignore_above": 256
                     }
                 },
-                "meta": {"description": "List of institution display names."}
             },
             "authors": {
                 "type": "text",
@@ -153,15 +146,12 @@ def define_opensearch_mapping():
                         "ignore_above": 256
                     }
                 },
-                "meta": {"description": "List of author names."}
             },
             "cited_by_count": {
                 "type": "integer",
-                "meta": {"description": "Number of citations received."}
             },
             "fwci": {
                 "type": "float",
-                "meta": {"description": "Field-Weighted Citation Impact."}
             },
             "citation_normalized_percentile": {
                 "properties": {
@@ -169,12 +159,10 @@ def define_opensearch_mapping():
                     "is_in_top_1_percent": {"type": "boolean"},
                     "value": {"type": "float"}
                 },
-                "meta": {"description": "Citation percentile details."}
             },
             "abstract": {
                 "type": "text",
                 "analyzer": "standard",
-                "meta": {"description": "Work abstract, indexed for full-text search."}
             },
             "primary_topic": {
                 "properties": {
@@ -203,7 +191,6 @@ def define_opensearch_mapping():
                         }
                     }
                 },
-                "meta": {"description": "The single most relevant topic."}
             },
             "topics": {
                 "type": "nested",
@@ -260,17 +247,14 @@ def define_opensearch_mapping():
             "cited_by_api_url": {
                 "type": "keyword",
                 "index": False,
-                "meta": {"description": "OpenAlex API URL to retrieve citing works."}
             },
             "updated_date": {
                 "type": "date",
                 "format": "basic_date_time",
-                "meta": {"description": "Timestamp when the OpenAlex record was last updated."}
             },
             "created_date": {
                 "type": "date",
                 "format": "yyyy-MM-dd",
-                "meta": {"description": "Date when the OpenAlex record was created."}
             }
         }
     }
