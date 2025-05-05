@@ -249,7 +249,7 @@ def define_opensearch_mapping():
             },
             "updated_date": {
                 "type": "date",
-                "format": "basic_date_time",
+                "format": "strict_date_optional_time",
             },
             "created_date": {
                 "type": "date",
