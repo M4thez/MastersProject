@@ -281,7 +281,145 @@ def define_opensearch_mapping():
         }
     }
 
-# Main Pipeline Execution
+
+def create_opensearch_index(client, index_name, mapping):
+    """Creates the OpenSearch index with the specified mapping if it doesn't exist."""
+
+    try:
+        if not client.indices.exists(index=index_name):
+            logging.info(f"Index '{index_name}' does not exist. Creating it.")
+            response = client.indices.create(
+                index=index_name, body={'mappings': mapping})
+            logging.info(
+                f"Index '{index_name}' created successfully: {response}")
+            return True
+        else:
+            logging.info(
+                f"Index '{index_name}' already exists. Skipping creation.")
+            return True
+    except exceptions.RequestError as re:
+        logging.error(
+            # exception tuple info for more details
+            f"Error creating index '{index_name}'. Details: {re.info['error']['root_cause']}", exc_info=True)
+        return False
+    except exceptions.ConnectionError as ce:
+        logging.error(
+            f"Connection error while creating index '{index_name}': {ce}", exc_info=True)
+        return False
+    except Exception as e:
+        logging.error(
+            f"Unexpected error while creating index '{index_name}': {e}", exc_info=True)
+        return False
+
+
+def load_from_parquet(filename):
+    """Loads data from a Parquet file into a DataFrame."""
+    logging.info(f"Loading data from Parquet file: {filename}")
+
+    try:
+        df = pd.read_parquet(filename, engine='pyarrow')
+        logging.info(f"Data loaded successfully from {filename}.")
+        df = df.astype(object).where(
+            pd.notnull(df), None)  # Convert NaN to None
+        return df
+    except FileNotFoundError:
+        logging.error(f"File not found: {filename}", exc_info=True)
+        return None
+    except pd.errors.EmptyDataError:
+        logging.error(f"Empty data in file: {filename}", exc_info=True)
+        return None
+    except Exception as e:
+        logging.error(
+            f"Error loading data from file: {filename}. Error: {e}", exc_info=True)
+        return None
+
+
+def generate_bulk_actions(dataframe, target_index, id_col='openalex_id'):
+    """Generator function to yield bulk API actions from DataFrame rows."""
+    if id_col not in dataframe.columns:
+        logging.error(
+            f"ID column '{id_col}' not found in DataFrame. Cannot generate bulk actions.")
+        return
+
+    skipped_count = 0
+    records = dataframe.to_dict(orient='records')
+    logging.info(f"Generating bulk actions for {len(records)} records...")
+
+    for doc in records:
+        doc_id = doc.get(id_col)
+
+        if doc_id is None:
+            skipped_count += 1
+            continue
+
+        yield {
+            "_index": target_index,
+            "_id": str(doc_id),  # Ensure ID is a string
+            "_source": doc      # Use the potentially cleaned doc
+        }
+    if skipped_count > 0:
+        logging.warning(
+            f"Skipped {skipped_count} records because '{id_col}' was missing or null.")
+
+
+def index_data_to_opensearch(client, dataframe, index_name):
+    """Indexes data from a DataFrame into OpenSearch using streaming bulk."""
+    if dataframe is None or dataframe.empty:
+        logging.error("DataFrame is empty or None. Cannot index data.")
+        return False
+    logging.info(
+        f"Starting bulk indexing of {len(dataframe)} records to '{index_name}'...")
+    success_count = 0
+    failed_count = 0
+    total_processed = 0
+
+    try:
+        for ok, action_info in helpers.streaming_bulk(
+            client=client,
+            actions=generate_bulk_actions(dataframe, index_name),
+            chunk_size=500,
+            max_retries=4,
+            initial_backoff=1,
+            max_backoff=5,
+            request_timeout=60,
+            raise_on_error=False
+        ):
+            total_processed += 1
+            if ok:
+                success_count += 1
+            else:
+                failed_count += 1
+                logging.error(f"Failed to index document: {action_info}")
+
+            if total_processed % 1000 == 0:
+                logging.info(
+                    f"Processed {total_processed} records. Success: {success_count}, Failed: {failed_count}")
+
+        logging.info("Bulk indexing finished.")
+        logging.info(f"  Total actions attempted: {total_processed}")
+        logging.info(f"  Successfully indexed: {success_count}")
+        logging.info(f"  Failed operations: {failed_count}")
+
+        # Optional: Refresh the index only if everything succeeded
+        if success_count > 0 and failed_count == 0:
+            try:
+                client.indices.refresh(index=index_name)
+                logging.info(f"Index '{index_name}' refreshed.")
+            except Exception as e:
+                logging.error(f"Error refreshing index '{index_name}': {e}")
+        elif failed_count > 0:
+            logging.warning("Index not refreshed due to indexing errors.")
+
+        return failed_count == 0  # Return True if successful
+
+    except exceptions.ApiError as ae:
+        logging.error(
+            f"An OpenSearch API error occurred during bulk indexing: {ae}", exc_info=True)
+        return False
+    except Exception as e:
+        logging.error(
+            f"An unexpected error occurred during bulk indexing: {e}", exc_info=True)
+        return False
 
 
 def main():
