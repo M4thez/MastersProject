@@ -80,23 +80,20 @@ def define_opensearch_mapping():
         "properties": {
             "university_key": {
                 "type": "keyword",
-                "meta": {"description": "Internal key representing the university this record was queried for (e.g., GR_UOP)."}
             },
             "openalex_id": {
                 "type": "keyword",
-                "meta": {"description": "Unique OpenAlex Work ID (URL)."}
             },
             "doi": {
                 "type": "keyword",
-                "meta": {"description": "Digital Object Identifier (URL/string)."}
             },
             "language": {
                 "type": "keyword",
-                "meta": {"description": "Language code (e.g., 'en'). Useful for filtering."}
+                "meta": {"description": "Language code (e.g., 'en')."}
             },
             "type": {
                 "type": "keyword",
-                "meta": {"description": "OpenAlex work type (e.g., 'article', 'book'). Useful for filtering/aggregation."}
+                "meta": {"description": "OpenAlex work type (e.g., 'article', 'book')."}
             },
             "title": {
                 "type": "text",
@@ -107,16 +104,16 @@ def define_opensearch_mapping():
                         "ignore_above": 512
                     }
                 },
-                "meta": {"description": "Work title. Indexed for full-text search ('title') and exact match/sorting/aggregation ('title.keyword')."}
+                "meta": {"description": "Work title."}
             },
             "publication_date": {
                 "type": "date",
                 "format": "yyyy-MM-dd",
-                "meta": {"description": "Full publication date. Format must match incoming data (YYYY-MM-DD)."}
+                "meta": {"description": "Full publication date."}
             },
             "publication_year": {
                 "type": "integer",
-                "meta": {"description": "Year of publication. Useful for range filtering and aggregation."}
+                "meta": {"description": "Year of publication."}
             },
             "open_access": {
                 "properties": {
@@ -134,7 +131,7 @@ def define_opensearch_mapping():
                         "index": False
                     }
                 },
-                "meta": {"description": "Object containing Open Access status details. URL stored but not indexed."}
+                "meta": {"description": "Object containing Open Access status details."}
             },
             "institutions": {
                 "type": "keyword",
@@ -145,7 +142,7 @@ def define_opensearch_mapping():
                         "ignore_above": 256
                     }
                 },
-                "meta": {"description": "List of institution display names associated with the work. Useful for filtering/aggregation."}
+                "meta": {"description": "List of institution display names."}
             },
             "authors": {
                 "type": "text",
@@ -156,7 +153,7 @@ def define_opensearch_mapping():
                         "ignore_above": 256
                     }
                 },
-                "meta": {"description": "List of author names. Indexed for text search ('authors') and exact match/aggregation ('authors.keyword')."}
+                "meta": {"description": "List of author names."}
             },
             "cited_by_count": {
                 "type": "integer",
@@ -206,7 +203,7 @@ def define_opensearch_mapping():
                         }
                     }
                 },
-                "meta": {"description": "The single most relevant topic assigned by OpenAlex, including its hierarchy and score."}
+                "meta": {"description": "The single most relevant topic."}
             },
             "topics": {
                 "type": "nested",
@@ -236,7 +233,7 @@ def define_opensearch_mapping():
                         }
                     }
                 },
-                "meta": {"description": "List of all topics assigned by OpenAlex. 'nested' type allows querying fields within a single topic object."}
+                "meta": {"description": "List of all topics assigned by OpenAlex."}
             },
             "keywords": {
                 "type": "nested",
@@ -250,7 +247,7 @@ def define_opensearch_mapping():
                                 "ignore_above": 256
                             }
                         },
-                        "meta": {"description": "The keyword text itself. Indexed for text search ('keywords.display_name') and exact match/aggregation ('keywords.display_name.keyword')."}
+                        "meta": {"description": "The keyword text itself."}
                     },
                     "id": {
                         "type": "keyword",
@@ -259,14 +256,14 @@ def define_opensearch_mapping():
                         "type": "float",
                     }
                 },
-                "meta": {"description": "List of author-supplied keywords, each with display name, ID, and score. 'nested' allows querying fields within a single keyword object."}
+                "meta": {"description": "List of author-supplied keywords."}
             },
 
 
             "cited_by_api_url": {
                 "type": "keyword",
                 "index": False,
-                "meta": {"description": "OpenAlex API URL to retrieve citing works. Stored but not indexed."}
+                "meta": {"description": "OpenAlex API URL to retrieve citing works."}
             },
             "updated_date": {
                 "type": "date",
