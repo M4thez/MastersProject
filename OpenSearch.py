@@ -449,7 +449,7 @@ def main():
     indexing_success = index_data_to_opensearch(
         opensearch_client, dataframe_to_index, INDEX_NAME)
     if indexing_success:
-        logging.info("\/\/ \/\/ \/\/ Data indexed successfully.")
+        logging.info("^^^ Data indexed successfully. ^^^")
     else:
         logging.error("--- --- --- Pipeline completed with indexing errors.")
         sys.exit(1)
