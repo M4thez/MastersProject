@@ -129,7 +129,6 @@ def define_opensearch_mapping():
             },
             "institutions": {
                 "type": "keyword",
-                "analyzer": "standard",
                 "fields": {
                     "keyword": {
                         "type": "keyword",
