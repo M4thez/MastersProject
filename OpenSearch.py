@@ -232,8 +232,7 @@ def define_opensearch_mapping():
                             "display_name": {"type": "keyword"}
                         }
                     }
-                },
-                "meta": {"description": "List of all topics assigned by OpenAlex."}
+                }
             },
             "keywords": {
                 "type": "nested",
@@ -254,8 +253,7 @@ def define_opensearch_mapping():
                     "score": {
                         "type": "float",
                     }
-                },
-                "meta": {"description": "List of author-supplied keywords."}
+                }
             },
 
 
