@@ -432,6 +432,28 @@ def main():
         logging.error("Failed to connect to OpenSearch. Exiting.")
         sys.exit(1)
 
+    # --- Stage 2: Define Index Mapping and Create Index ---
+    mapping = define_opensearch_mapping()
+    if not create_opensearch_index(opensearch_client, INDEX_NAME, mapping):
+        logging.error("Failed to create OpenSearch index. Exiting.")
+        sys.exit(1)
+
+    # --- Stage 3: Load Data from Parquet File ---
+    dataframe_to_index = load_from_parquet(PARQUET_FILE_PATH)
+    if dataframe_to_index is None or dataframe_to_index.empty:
+        logging.error(
+            f"Failed to load data from {PARQUET_FILE_PATH}. Exiting.")
+        sys.exit(1)
+
+    # --- Stage 4: Index Data to OpenSearch ---
+    indexing_success = index_data_to_opensearch(
+        opensearch_client, dataframe_to_index, INDEX_NAME)
+    if indexing_success:
+        logging.info("\/\/ \/\/ \/\/ Data indexed successfully.")
+    else:
+        logging.error("--- --- --- Pipeline completed with indexing errors.")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
