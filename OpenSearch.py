@@ -247,7 +247,6 @@ def define_opensearch_mapping():
                                 "ignore_above": 256
                             }
                         },
-                        "meta": {"description": "The keyword text itself."}
                     },
                     "id": {
                         "type": "keyword",
