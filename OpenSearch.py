@@ -17,14 +17,14 @@ OPENSEARCH_HOST = 'localhost'
 
 # FILE/INDEX Names
 PARQUET_FILE_PATH = 'papers_clean2.parquet'
-INDEX_NAME = 'university_papers'
+INDEX_NAME = 'university_papers_second'
 
 # Logging setup
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("pipeline.log"),  # Log to a file
+        logging.FileHandler("pipeline_second.log"),  # Log to a file
         logging.StreamHandler(sys.stdout)    # Log to console
     ]
 )
