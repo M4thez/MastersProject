@@ -12,9 +12,9 @@ if (!user || !rawPassword) {
 
 const encodedPassword = encodeURIComponent(rawPassword);
 
-const client = new Client({
-    node: `${process.env.OPENSEARCH_SCHEME}://${user}:${encodedPassword}@${process.env.OPENSEARCH_HOST}:${process.env.OPENSEARCH_PORT}`
-});
+const clientOptions = {
+    node: `${scheme}://${user}:${encodedPassword}@${process.env.OPENSEARCH_HOST}:${process.env.OPENSEARCH_PORT}`
+};
 
 if (scheme === 'https') {
     clientOptions.ssl = {
@@ -22,6 +22,8 @@ if (scheme === 'https') {
     };
     console.warn("Node.js: OpenSearch SSL certificate verification is DISABLED.");
 }
+
+const client = new Client(clientOptions);
 
 client.ping()
     .then(response => console.log('Node.js: Successfully connected to OpenSearch!'))
