@@ -15,6 +15,13 @@ const client = new Client({
     node: `${process.env.OPENSEARCH_SCHEME}://${user}:${encodedPassword}@${process.env.OPENSEARCH_HOST}:${process.env.OPENSEARCH_PORT}`
 });
 
+if (scheme === 'https') {
+    clientOptions.ssl = {
+        rejectUnauthorized: false // Disables certificate verification
+    };
+    console.warn("Node.js: OpenSearch SSL certificate verification is DISABLED.");
+}
+
 client.ping()
     .then(response => console.log('Node.js: Successfully connected to OpenSearch!'))
     .catch(error => console.error('Node.js: OpenSearch connection error:', error));
