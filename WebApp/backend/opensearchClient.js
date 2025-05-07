@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const user = process.env.OPENSEARCH_USER;
 const rawPassword = process.env.OPENSEARCH_PASSWORD;
+const scheme = process.env.OPENSEARCH_SCHEME;
 
 if (!user || !rawPassword) {
     console.error("OpenSearch user or password not set in environment variables!");
