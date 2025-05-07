@@ -21,6 +21,8 @@ pip freeze > requirements.txt
 To delete existing index on OpenSearch:<br>
 curl -k -u 'admin:password' -X DELETE 'https://localhost:9200/university_papers'
 
+OpenSearch version: 2.19.1
+
 To run the script on the VM:<br>
 python3.12 script.py
 

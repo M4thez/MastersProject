@@ -1,5 +1,8 @@
 university_papers_data_full.parquet
 
+# NPM packages
+node_modules
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
