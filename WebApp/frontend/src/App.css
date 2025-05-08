@@ -1,42 +1,125 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.App {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.search-form {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  width: 60%;
+  max-width: 500px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.search-button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #61dafb;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+.search-button:disabled {
+  background-color: #ccc;
 }
 
-.card {
-  padding: 2em;
+.container {
+  display: flex;
+  flex-grow: 1;
+  padding: 20px;
+  gap: 20px;
 }
 
-.read-the-docs {
-  color: #888;
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #eee;
+  padding-right: 20px;
+}
+
+.facet {
+  margin-bottom: 20px;
+}
+.facet h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.facet select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.results-main {
+  flex-grow: 1;
+}
+
+.results-list {
+  margin-top: 20px;
+}
+
+.paper-item {
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.paper-item h3 {
+  margin-top: 0;
+}
+.paper-item h3 a {
+  color: #007bff;
+  text-decoration: none;
+}
+.paper-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.paper-item p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #333;
+}
+.paper-item .abstract {
+  color: #555;
+  font-size: 0.85em;
+  max-height: 60px; /* approx 3 lines */
+  overflow: hidden;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
 }
