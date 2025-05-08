@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios"; // or use fetch
 import "./App.css";
 
-const BACKEND_URL = "http://localhost:3001/api/search"; // Node.js backend URL
+const BACKEND_URL = "http://82.145.73.10:3001/api/search"; // Node.js backend URL
 
 function App() {
   const [queryText, setQueryText] = useState("");
@@ -39,6 +39,8 @@ function App() {
           pageSize: pageSize,
           // sortBy: { field: "publication_date", order: "desc" } // Example sort
         });
+        console.log("Search response:", response.data);
+
         setResults(response.data.hits);
         setTotalHits(response.data.total);
         setAggregations(response.data.aggregations || {});
