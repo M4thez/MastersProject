@@ -1,0 +1,11 @@
+:root {
+  --accent-color: #0077ec;
+  --accent-light-color: #00a3ff;
+  --background-color: #0c0f13;
+  --background-75-color: #14171c;
+  --background-50-color: #1a1f26;
+  --background-25-color: #1f2632;
+  --font-white: #f9fdff;
+  --font-gray: #b2c6e3;
+  --font-light-gray: rgba(178, 198, 227, 0.7);
+}

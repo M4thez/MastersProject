@@ -1,28 +1,29 @@
 .App {
-  font-family: sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--background-75-color);
   padding: 20px;
-  color: white;
   text-align: center;
 }
 
 .search-form {
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
+  gap: 12px;
 }
 
 .search-input {
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
+  color: var(--font-white);
+  background-color: var(--background-50-color);
+  border: 1px solid var(--background-25-color);
+  border-radius: 6px;
   width: 60%;
   max-width: 500px;
 }
@@ -30,13 +31,15 @@
 .search-button {
   padding: 10px 15px;
   font-size: 16px;
-  background-color: #61dafb;
-  border: none;
-  border-radius: 0 4px 4px 0;
+  min-width: 120px;
+  color: var(--font-white);
+  background-color: var(--accent-color);
+  border: 1px solid var(--accent-light-color);
+  border-radius: 6px;
   cursor: pointer;
 }
 .search-button:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
 }
 
 .container {

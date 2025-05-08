@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios"; // or use fetch
+import axios from "axios";
 import "./App.css";
+import "./variables.css";
 
 const BACKEND_URL = "http://82.145.73.10:3001/api/search"; // Node.js backend URL
 
@@ -102,7 +103,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>University Papers Search</h1>
+        <h1>EUNICoast Papers Search Engine</h1>
         <form onSubmit={handleSearchSubmit} className="search-form">
           <input
             type="text"
@@ -170,12 +171,11 @@ function App() {
                   <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
                 </p>
                 <p>
-                  <strong>Year:</strong> {paper.publication_year || "N/A"} |{" "}
+                  <strong>Year:</strong> {paper.publication_date || "N/A"} |{" "}
                   <strong>Type:</strong> {paper.type || "N/A"}
                 </p>
                 <p>
-                  <strong>University:</strong>{" "}
-                  {paper.university_query_key || "N/A"}
+                  <strong>University:</strong> {paper.university_key || "N/A"}
                 </p>
                 <p>
                   <strong>OA:</strong> {paper.is_oa ? "Yes" : "No"} (
@@ -183,7 +183,7 @@ function App() {
                 </p>
                 <p className="abstract">
                   {paper.abstract
-                    ? `${paper.abstract.substring(0, 250)}...`
+                    ? `${paper.abstract.substring(0, 500)}...`
                     : "No abstract available."}
                 </p>
                 {paper.score && (

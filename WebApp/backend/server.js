@@ -41,7 +41,7 @@ app.post('/api/search', async (req, res) => {
         aggs: {
             papers_by_year: {
                 terms: {
-                    field: "publication_year",
+                    field: "publication_date",
                     size: 20 // Adjust the size as needed
                 }
             },
