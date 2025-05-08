@@ -152,18 +152,7 @@ function App() {
             {results.map((paper) => (
               <div key={paper.id} className="paper-item">
                 <h3>
-                  <a
-                    href={
-                      paper.doi
-                        ? `https://doi.org/${paper.doi.replace(
-                            "https://doi.org/",
-                            ""
-                          )}`
-                        : paper.oa_url || "#"
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={paper.doi || "#"} target="_blank">
                     {paper.title || "No Title"}
                   </a>
                 </h3>
@@ -171,15 +160,22 @@ function App() {
                   <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
                 </p>
                 <p>
-                  <strong>Year:</strong> {paper.publication_date || "N/A"} |{" "}
-                  <strong>Type:</strong> {paper.type || "N/A"}
+                  <strong>Publication Date:</strong>{" "}
+                  {paper.publication_date || "N/A"} | <strong>Type:</strong>{" "}
+                  {paper.type || "N/A"}
                 </p>
                 <p>
-                  <strong>University:</strong> {paper.university_key || "N/A"}
+                  <strong>Institutions:</strong>{" "}
+                  {paper.institutions?.join(", ") || "N/A"}
                 </p>
                 <p>
-                  <strong>OA:</strong> {paper.is_oa ? "Yes" : "No"} (
-                  {paper.oa_status || "N/A"})
+                  <strong>EUNICoast University:</strong>{" "}
+                  {paper.university_key || "N/A"}
+                </p>
+                <p>
+                  <strong>Open Access:</strong>{" "}
+                  {paper.open_access.is_oa ? "Yes" : "No"} (
+                  {paper.open_access.oa_status})
                 </p>
                 <p className="abstract">
                   {paper.abstract

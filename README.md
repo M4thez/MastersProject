@@ -35,6 +35,20 @@ To enter OpenSearch Dashboard: <br>
 (Behind firewall)
 VM_IP:5601
 
+### Runnning front and backend
+
+To get any current git changes:<br>
+git fetch
+git pull
+
+Backend:<br>
+cd MastersProject/WebApp/backend
+node server.js
+
+Frontend:<br>
+cd MastersProject/WebApp/frontend
+npm run dev
+
 ## Links used
 
 ### Connecting with OpenSearch via Python library OpenSearch-py
