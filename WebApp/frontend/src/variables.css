@@ -1,10 +1,10 @@
 :root {
   --accent-color: #0077ec;
   --accent-light-color: #00a3ff;
-  --background-color: #0c0f13;
-  --background-75-color: #14171c;
-  --background-50-color: #1a1f26;
-  --background-25-color: #1f2632;
+  --background-color: hsl(214, 23%, 6%);
+  --background-75-color: hsl(218, 17%, 10%);
+  --background-50-color: hsl(215, 19%, 16%);
+  --background-25-color: hsl(218, 23%, 19%);
   --font-white: #f9fdff;
   --font-gray: #b2c6e3;
   --font-light-gray: rgba(178, 198, 227, 0.7);

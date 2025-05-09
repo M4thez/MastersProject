@@ -117,6 +117,11 @@ function App() {
             {loading ? "Searching..." : "Search"}
           </button>
         </form>
+        <div className="search-info">
+            {error && <span className="error-message">Error: {error}</span>}
+            {!loading && totalHits > 0 && <span>Found {totalHits} results.</span>}
+            {!loading && totalHits === 0 && !error && <span>No results found.</span>}
+          </div>
       </header>
 
       <div className="container">
@@ -144,10 +149,7 @@ function App() {
         </aside>
 
         <main className="results-main">
-          {error && <p className="error-message">Error: {error}</p>}
-          {loading && !results.length && <p>Loading results...</p>}
-          {!loading && totalHits > 0 && <p>Found {totalHits} results.</p>}
-          {!loading && totalHits === 0 && !error && <p>No results found.</p>}
+  
 
           <div className="results-list">
             {results.map((paper) => (
@@ -180,14 +182,15 @@ function App() {
                   {paper.open_access.is_oa ? "Yes" : "No"} (
                   {paper.open_access.oa_status})
                 </p>
-                <p className="abstract">
+                <p>
+                  <strong>Abstract: </strong>
                   {paper.abstract
                     ? `${paper.abstract.substring(0, 500)}...`
-                    : "No abstract available."}
+                    : "--"}
                 </p>
                 {paper.score && (
                   <p>
-                    <small>Score: {paper.score.toFixed(4)}</small>
+                    <small>Score: {paper.score.toFixed(2)}</small>
                   </p>
                 )}
               </div>
@@ -200,7 +203,7 @@ function App() {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || loading}
               >
-                Previous
+                &#9664;
               </button>
               <span>
                 {" "}
@@ -210,7 +213,7 @@ function App() {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || loading}
               >
-                Next
+                &#9654;
               </button>
             </div>
           )}
