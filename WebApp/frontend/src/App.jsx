@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./App.css";
 import "./variables.css";
+import universitiesNameMap from "./utils/universitiesNameMap";
 
 const BACKEND_URL = "http://82.145.73.10:3001/api/search"; // Node.js backend URL
 
@@ -170,7 +171,9 @@ function App() {
                 </p>
                 <p>
                   <strong>EUNICoast University:</strong>{" "}
-                  {paper.university_key || "N/A"}
+                  {universitiesNameMap[paper.university_key] ||
+                    paper.university_key ||
+                    "N/A"}
                 </p>
                 <p>
                   <strong>Open Access:</strong>{" "}
