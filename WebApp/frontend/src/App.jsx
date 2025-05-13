@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./App.css";
 import "./variables.css";
+import "./toggleSwitch.css";
 import universitiesNameMap from "./utils/universitiesNameMap";
 
 const BACKEND_URL = "http://82.145.73.10:3001/api/search"; // Node.js backend URL
@@ -16,8 +17,11 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Sort selection
+  const [selectedSort, setSelectedSort] = useState("_score")
+  const [sortOrder, setSortOrder] = useState("desc");
+
   // --- Filters State ---
-  const [selectedYear, setSelectedYear] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
 
@@ -28,9 +32,8 @@ function App() {
       setCurrentPage(pageToFetch);
 
       const filters = {};
-      if (selectedYear) filters.publication_year = selectedYear;
       if (selectedType) filters.type = selectedType;
-      if (selectedUniversity) filters.university = selectedUniversity;
+      if (selectedUniversity) filters.university_key = selectedUniversity;
       // Add more filters here
 
       try {
@@ -39,7 +42,7 @@ function App() {
           filters: filters,
           page: pageToFetch,
           pageSize: pageSize,
-          // sortBy: { field: "publication_date", order: "desc" } // Example sort
+          sortBy: { field: selectedSort, order: sortOrder }
         });
         console.log("Search response:", response.data);
 
@@ -58,7 +61,7 @@ function App() {
         setLoading(false);
       }
     },
-    [queryText, selectedYear, selectedType, selectedUniversity, pageSize]
+    [queryText, selectedType, selectedUniversity, selectedSort, sortOrder, pageSize]
   ); // Dependencies for useCallback
 
   // Initial search or when query/filters change
@@ -66,11 +69,11 @@ function App() {
     performSearch(1); // Fetch first page on initial load or filter change
   }, [performSearch]); // Re-run if performSearch function identity changes (due to its deps)
 
-  const handleSearchInputChange = (event) => {
-    setQueryText(event.target.value);
-  };
+  // const handleSearchInputChange = (event) => {
+  // };
 
   const handleSearchSubmit = (event) => {
+    setQueryText(event.target[0].value);
     event.preventDefault();
     performSearch(1); // Reset to first page on new search
   };
@@ -99,6 +102,31 @@ function App() {
     );
   };
 
+  const renderSorting = (sortFieldSetter, sortOrderSetter) => {
+    return (
+      <div className="sort-controls">
+        <label htmlFor="sortFieldSelect">Sort by:</label>
+        <select id="sortFieldSelect" value={selectedSort} onChange={e => sortFieldSetter(e.target.value)}>
+          <option value="_score">Relevance</option>
+          <option value="publication_date">Date</option>
+          <option value="cited_by_count">Citations</option>
+          <option value="fwci">FWCI</option>
+        </select>
+        <label className="sort-order-toggle" htmlFor="sortOrderToggle">
+
+          <input type="checkbox" id="sortOrderToggle" name="sortOrderToggle"
+            checked={sortOrder === "desc"}
+            onChange={e => sortOrderSetter(e.target.checked ? "desc" : "asc")}
+          />
+          <span className="sort-order-slider"></span>
+        </label>
+        <span className="sort-order-text">
+          {sortOrder === "desc" ? "\u25BC" : "\u25B2"}
+        </span>
+      </div>
+    )
+  }
+
   const totalPages = Math.ceil(totalHits / pageSize);
 
   return (
@@ -108,8 +136,8 @@ function App() {
         <form onSubmit={handleSearchSubmit} className="search-form">
           <input
             type="text"
-            value={queryText}
-            onChange={handleSearchInputChange}
+            // value={queryText}
+            // onChange={handleSearchInputChange}
             placeholder="Search papers..."
             className="search-input"
           />
@@ -117,22 +145,20 @@ function App() {
             {loading ? "Searching..." : "Search"}
           </button>
         </form>
-        <div className="search-info">
-            {error && <span className="error-message">Error: {error}</span>}
-            {!loading && totalHits > 0 && <span>Found {totalHits} results.</span>}
-            {!loading && totalHits === 0 && !error && <span>No results found.</span>}
-          </div>
+        {renderSorting(setSelectedSort, setSortOrder)}
+        {results.length > 0 &&
+          (
+            <div className="search-info">
+              {error && <span className="error-message">Error: {error}</span>}
+              {!loading && totalHits > 0 && <span>Found {totalHits} results.</span>}
+              {!loading && totalHits === 0 && !error && <span>No results found.</span>}
+            </div>
+          )}
       </header>
 
       <div className="container">
         <aside className="sidebar">
           <h3>Filters</h3>
-          {renderAggregation(
-            "papers_by_year",
-            "Year",
-            selectedYear,
-            setSelectedYear
-          )}
           {renderAggregation(
             "papers_by_type",
             "Type",
@@ -145,59 +171,59 @@ function App() {
             selectedUniversity,
             setSelectedUniversity
           )}
-          {/* Add more facets here */}
         </aside>
 
         <main className="results-main">
-  
 
-          <div className="results-list">
-            {results.map((paper) => (
-              <div key={paper.id} className="paper-item">
-                <h3>
-                  <a href={paper.doi || "#"} target="_blank">
-                    {paper.title || "No Title"}
-                  </a>
-                </h3>
-                <p>
-                  <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
-                </p>
-                <p>
-                  <strong>Publication Date:</strong>{" "}
-                  {paper.publication_date || "N/A"} | <strong>Type:</strong>{" "}
-                  {paper.type || "N/A"}
-                </p>
-                <p>
-                  <strong>Institutions:</strong>{" "}
-                  {paper.institutions?.join(", ") || "N/A"}
-                </p>
-                <p>
-                  <strong>EUNICoast University:</strong>{" "}
-                  {universitiesNameMap[paper.university_key] ||
-                    paper.university_key ||
-                    "N/A"}
-                </p>
-                <p>
-                  <strong>Open Access:</strong>{" "}
-                  {paper.open_access.is_oa ? "Yes" : "No"} (
-                  {paper.open_access.oa_status})
-                </p>
-                <p>
-                  <strong>Abstract: </strong>
-                  {paper.abstract
-                    ? `${paper.abstract.substring(0, 500)}...`
-                    : "--"}
-                </p>
-                {paper.score && (
+          {results.length > 0 && (
+            <div className="results-list">
+              <h2 className="search-results-header">Search Results</h2>
+              {results.map((paper) => (
+                <div key={paper.id} className="paper-item">
+                  <h3>
+                    <a href={paper.doi || "#"} target="_blank">
+                      {paper.title || "No Title"}
+                    </a>
+                  </h3>
                   <p>
-                    <small>Score: {paper.score.toFixed(2)}</small>
+                    <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
                   </p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {totalPages > 1 && (
+                  <p>
+                    <strong>Publication Date:</strong>{" "}
+                    {paper.publication_date || "N/A"} | <strong>Type:</strong>{" "}
+                    {paper.type || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Institutions:</strong>{" "}
+                    {paper.institutions?.join(", ") || "N/A"}
+                  </p>
+                  <p>
+                    <strong>EUNICoast University:</strong>{" "}
+                    {universitiesNameMap[paper.university_key] ||
+                      paper.university_key ||
+                      "N/A"}
+                  </p>
+                  <p>
+                    <strong>Open Access:</strong>{" "}
+                    {paper.open_access.is_oa ? "Yes" : "No"} (
+                    {paper.open_access.oa_status})
+                  </p>
+                  <p>
+                    <strong>Abstract: </strong>
+                    {paper.abstract
+                      ? `${paper.abstract.substring(0, 500)}...`
+                      : "--"}
+                  </p>
+                  {paper.score && (
+                    <p>
+                      <small>Score: {paper.score.toFixed(2)}</small>
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {totalPages > 1 && results.length > 0 && (
             <div className="pagination">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}

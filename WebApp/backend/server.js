@@ -11,22 +11,14 @@ app.use(express.json()); // To parse JSON request bodies
 
 // Search endpoint
 // Post request to search for a query in the OpenSearch index 
-// not get because we are sending a body with the query
+// not get because of sending a body with the query
 app.post('/api/search', async (req, res) => {
-    const { queryText, filters = {}, page = 1, pageSize = 10, sortBy } = req.body;
+    const { queryText, filters = {}, page = 1, pageSize = 10, sortBy = null } = req.body;
     const from = (page - 1) * pageSize; // Calculate the starting point for pagination
     console.log('Search request body:', req.body);
 
-    // --- If queryText is empty AND no filters are applied, return no results immediately ---
-    if ((!queryText || queryText.trim() === "") && Object.keys(filters).length === 0) {
-        console.log('Empty query text and no filters. Returning no results.');
-        return res.json({
-            hits: [],
-            total: 0,
-            aggregations: {} // Or fetch initial aggregations with a separate match_all query if needed
-        });
-    }
-
+    const hasQueryText = queryText && queryText.trim() !== "";
+    const hasFilters = Object.keys(filters).length > 0;
 
     // Construct the search query
     const osQueryBody = {
@@ -54,14 +46,14 @@ app.post('/api/search', async (req, res) => {
             papers_by_university: {
                 terms: {
                     field: "university_key",
-                    size: 10 // Adjust the size as needed
+                    size: 13 // Adjust the size as needed
                 }
             }
         }
     }
 
-    // 1. Handle free-text query (queryText)
-    if (queryText && queryText.trim() !== "") {
+    // The Main query part
+    if (hasQueryText) {
         osQueryBody.query.bool.must.push({
             multi_match: {
                 query: queryText,
@@ -72,15 +64,17 @@ app.post('/api/search', async (req, res) => {
     } else {
         // If queryText is empty BUT filters might be present,
         // match based on filters.
-        if (Object.keys(filters).length > 0) {
-            osQueryBody.query.bool.must.push({ match_all: {} });
+        osQueryBody.query.bool.must.push({match_all: {}});
+
+        if(!hasFilters) {
+            osQueryBody.size = 0; // We don't need hits, just aggregations for the initial load
         }
     }
 
-    // 2. Handle filters
-    if (filters.publication_year) {
+    // Handle filters
+    if (filters.publication_date) {
         osQueryBody.query.bool.filter.push({
-            term: { publication_year: filters.publication_year }
+            term: { publication_date: filters.publication_date }
         });
     }
     if (filters.type) {
@@ -90,7 +84,7 @@ app.post('/api/search', async (req, res) => {
     }
     if (filters.university) {
         osQueryBody.query.bool.filter.push({
-            term: { "university_key.keyword": filters.university }
+            term: { university_key: filters.university_key }
         });
     }
 
@@ -102,13 +96,10 @@ app.post('/api/search', async (req, res) => {
 
             }
         }];
-    } else if (!sortBy && !queryText && queryText.trim() !== "") {
-        osQueryBody.sort = [{
-            "publication_year": {
-                order: "desc" // Default sorting by publication year descending
-            }
-        }];
-    }
+    } 
+    else if (!hasQueryText && !hasFilters) {
+        osQueryBody.sort = [{"publication_date": {order: "desc"}}];
+    } 
 
     console.log('Constructed OpenSearch Query:', JSON.stringify(osQueryBody, null, 2));
 

@@ -11,6 +11,10 @@
   margin: 20px;
 }
 
+.search-results-header {
+  margin: 2px;
+}
+
 .search-form {
   margin-top: 20px;
   display: flex;

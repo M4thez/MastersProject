@@ -1,0 +1,78 @@
+.sort-controls {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white; /* Assuming header background is dark */
+  }
+  
+  .sort-controls label:not(.sort-order-toggle) { /* Label for select */
+      margin-right: 5px;
+  }
+  
+  .sort-controls select {
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+  }
+  
+  /* The switch - the box around the slider */
+  .sort-order-toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Width of the toggle */
+    height: 24px; /* Height of the toggle */
+    margin-left: 5px; /* Space before toggle */
+  }
+  
+  /* Hide default HTML checkbox */
+  .sort-order-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .sort-order-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 24px; /* Make it rounded */
+  }
+  
+  .sort-order-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Height of the inner circle */
+    width: 18px;  /* Width of the inner circle */
+    left: 3px;    /* Position from left */
+    bottom: 3px;  /* Position from bottom */
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%; /* Make it a circle */
+  }
+  
+  input:checked + .sort-order-slider {
+    background-color: #2196F3; /* Blue when checked (ASC) */
+  }
+  
+  
+  input:checked + .sort-order-slider:before {
+    -webkit-transform: translateX(26px); /* How far the circle moves */
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  .sort-order-text {
+    min-width: 60px; /* To prevent layout shift */
+    text-align: left;
+    font-size: 22px;
+}
