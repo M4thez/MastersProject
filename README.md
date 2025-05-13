@@ -4,6 +4,10 @@ Repository for the Master's degree project by Mateusz Boboryko
 
 ## Useful commands in the project
 
+### Run the web app via a single command
+
+<i>./start_webapp.sh</i>
+
 ### Python venv - virtual environment
 
 Windows:<br>
