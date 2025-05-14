@@ -68,32 +68,32 @@ button {
   opacity: 0.5;
 }
 
-.sort-reset-button {
+.reset-button {
   font-size: 22px;
 }
 
-.container {
+.filters-container {
   display: flex;
-  flex-grow: 1;
-  padding: 20px;
-  gap: 20px;
+  flex-direction: column;
+  background-color: var(--background-50-color);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 10px;
+  gap: 12px;
+  & h3,h4 {
+    margin: 4px;
+    padding: 0;
+  }
 }
 
-.sidebar {
-  width: 250px;
-  border-right: 1px solid #eee;
-  padding-right: 20px;
+.filters-header {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
 }
 
-.facet {
-  margin-bottom: 20px;
-}
-.facet h4 {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-.facet select {
-  width: 100%;
+.filter-single select {
+  min-width: 30%;
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ccc;
@@ -154,4 +154,10 @@ button {
 .error-message {
   color: red;
   font-weight: bold;
+}
+
+@media screen and (min-width: 1000px) {
+  .paper-item {
+    width: 50%;
+  }
 }

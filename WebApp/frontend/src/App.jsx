@@ -82,13 +82,13 @@ function App() {
     performSearch(newPage);
   };
 
-  // --- Helper to render aggregations (Facets) ---
+  // --- Helper to render aggregations---
   const renderAggregation = (aggName, title, selectedValue, setter) => {
     const buckets = aggregations[aggName]?.buckets || [];
     if (buckets.length === 0) return null;
 
     return (
-      <div className="facet">
+      <div className="filter-single">
         <h4>{title}</h4>
         <select value={selectedValue} onChange={(e) => setter(e.target.value)}>
           <option value="">All</option>
@@ -114,7 +114,7 @@ function App() {
         </select>
         <label className="sort-order-toggle" htmlFor="sortOrderToggle">
 
-          <input type="checkbox" id="sortOrderToggle" name="sortOrderToggle"
+          <input title="Toggle sort order" type="checkbox" id="sortOrderToggle" name="sortOrderToggle"
             checked={sortOrder === "desc"}
             onChange={e => sortOrderSetter(e.target.checked ? "desc" : "asc")}
           />
@@ -123,7 +123,7 @@ function App() {
         <span className="sort-order-text">
           {sortOrder === "desc" ? "\u25BC" : "\u25B2"}
         </span>
-        <button type="button" className="sort-reset-button" onClick={() => {setSortOrder("desc"); setSelectedSort("_score");}}>&#8634;</button>
+        <button title="Reset sorting" type="button" className="reset-button" onClick={() => { setSortOrder("desc"); setSelectedSort("_score"); }}>&#8634;</button>
       </div>
     )
   }
@@ -142,24 +142,18 @@ function App() {
             placeholder="Search papers..."
             className="search-input"
           />
-          <button type="submit" className="search-button" disabled={loading}>
+          <button title="Perform search" type="submit" className="search-button" disabled={loading}>
             {loading ? "Searching..." : "Search"}
           </button>
         </form>
+        {/* Sorting */}
         {renderSorting(setSelectedSort, setSortOrder)}
-        {results.length > 0 &&
-          (
-            <div className="search-info">
-              {error && <span className="error-message">Error: {error}</span>}
-              {!loading && totalHits > 0 && <span>Found <strong>{totalHits}</strong> results.</span>}
-              {!loading && totalHits === 0 && !error && <span>No results found.</span>}
-            </div>
-          )}
-      </header>
-
-      <div className="container">
-        <aside className="sidebar">
-          <h3>Filters</h3>
+        {/* Filters */}
+        <div className="filters-container">
+          <div className="filters-header">
+            <h3>Filters</h3>
+            <button title="Reset filters" type="button" className="reset-button" onClick={() => { setSelectedType(""); setSelectedUniversity(""); }}>&#8634;</button>
+          </div>
           {renderAggregation(
             "papers_by_type",
             "Type",
@@ -172,84 +166,94 @@ function App() {
             selectedUniversity,
             setSelectedUniversity
           )}
-        </aside>
 
-        <main className="results-main">
+        </div>
+        {/* Search results info */}
 
-          {results.length > 0 && (
-            <div className="results-list">
-              <h2 className="search-results-header">Search Results</h2>
-              {results.map((paper) => (
-                <div key={paper.id} className="paper-item">
-                  <h3>
-                    <a href={paper.doi || "#"} target="_blank">
-                      {paper.title || "No Title"}
-                    </a>
-                  </h3>
-                  <p>
-                    <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Publication Date: </strong>
-                    {paper.publication_date || "N/A"} | <strong>Type: </strong>
-                    {paper.type || "N/A"} | <strong>Language: </strong> {paper.language || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Citations: </strong> {paper.cited_by_count || 0} | <strong>FWCI: </strong> {paper.fwci || 0}
-                  </p>
-                  <p>
-                    <strong>Institutions:</strong>{" "}
-                    {paper.institutions?.join(", ") || "N/A"}
-                  </p>
-                  <p>
-                    <strong>EUNICoast University:</strong>{" "}
-                    {universitiesNameMap[paper.university_key] ||
-                      paper.university_key ||
-                      "N/A"}
-                  </p>
-                  <p>
-                    <strong>Open Access:</strong>{" "}
-                    {paper.open_access.is_oa ? "Yes" : "No"} (
-                    {paper.open_access.oa_status})
-                  </p>
-                  <p>
-                    <strong>Abstract: </strong>
-                    {paper.abstract
-                      ? `${paper.abstract.substring(0, 500)}...`
-                      : "--"}
-                  </p>
-                  {paper.score && (
-                    <p>
-                      <small>Score: {paper.score.toFixed(2)}</small>
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
+        <div className="search-info">
+          {error && <span className="error-message">Error: {error}</span>}
+          {!loading && totalHits > 0 && results.length > 0 && <span>Found <strong>{totalHits}</strong> results.</span>}
+          {!loading && totalHits === 0 && !error && (
+            <span>No results found. {(selectedType || selectedUniversity) && ("Applied filters: " + selectedType + " " + selectedUniversity)}</span>
           )}
-          {totalPages > 1 && results.length > 0 && (
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1 || loading}
-              >
-                &#9664;
-              </button>
-              <span>
-                {" "}
-                Page {currentPage} of {totalPages}{" "}
-              </span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages || loading}
-              >
-                &#9654;
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
+        </div>
+
+      </header>
+      <main className="results-main">
+
+        {results.length > 0 && (
+          <div className="results-list">
+            <h2 className="search-results-header">Search Results</h2>
+            {results.map((paper) => (
+              <div key={paper.id} className="paper-item">
+                <h3>
+                  <a href={paper.doi || "#"} target="_blank">
+                    {paper.title || "No Title"}
+                  </a>
+                </h3>
+                <p>
+                  <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
+                </p>
+                <p>
+                  <strong>Publication Date: </strong>
+                  {paper.publication_date || "N/A"} | <strong>Type: </strong>
+                  {paper.type || "N/A"} | <strong>Language: </strong> {paper.language || "N/A"}
+                </p>
+                <p>
+                  <strong>Citations: </strong> {paper.cited_by_count || 0} | <strong>FWCI: </strong> {paper.fwci || 0}
+                </p>
+                <p>
+                  <strong>Institutions:</strong>{" "}
+                  {paper.institutions?.join(", ") || "N/A"}
+                </p>
+                <p>
+                  <strong>EUNICoast University:</strong>{" "}
+                  {universitiesNameMap[paper.university_key] ||
+                    "N/A"} ({paper.university_key})
+                </p>
+                <p>
+                  <strong>Open Access:</strong>{" "}
+                  {paper.open_access.is_oa ? "Yes" : "No"} (
+                  {paper.open_access.oa_status})
+                </p>
+                <p>
+                  <strong>Abstract: </strong>
+                  {paper.abstract
+                    ? `${paper.abstract.substring(0, 500)}...`
+                    : "--"}
+                </p>
+                {paper.score && (
+                  <p>
+                    <small>Score: {paper.score.toFixed(2)}</small>
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {totalPages > 1 && results.length > 0 && (
+          <div className="pagination">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1 || loading}
+            >
+              &#9664;
+            </button>
+            <span>
+              {" "}
+              Page {currentPage} of {totalPages}{" "}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || loading}
+            >
+              &#9654;
+            </button>
+          </div>
+        )}
+      </main>
     </div>
+
   );
 }
 

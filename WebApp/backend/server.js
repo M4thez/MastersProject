@@ -82,7 +82,7 @@ app.post('/api/search', async (req, res) => {
             term: { type: filters.type }
         });
     }
-    if (filters.university) {
+    if (filters.university_key) {
         osQueryBody.query.bool.filter.push({
             term: { university_key: filters.university_key }
         });
