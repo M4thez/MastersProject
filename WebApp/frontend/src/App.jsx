@@ -123,6 +123,7 @@ function App() {
         <span className="sort-order-text">
           {sortOrder === "desc" ? "\u25BC" : "\u25B2"}
         </span>
+        <button type="button" className="sort-reset-button" onClick={() => {setSortOrder("desc"); setSelectedSort("_score");}}>&#8634;</button>
       </div>
     )
   }
@@ -150,7 +151,7 @@ function App() {
           (
             <div className="search-info">
               {error && <span className="error-message">Error: {error}</span>}
-              {!loading && totalHits > 0 && <span>Found {totalHits} results.</span>}
+              {!loading && totalHits > 0 && <span>Found <strong>{totalHits}</strong> results.</span>}
               {!loading && totalHits === 0 && !error && <span>No results found.</span>}
             </div>
           )}
@@ -189,9 +190,12 @@ function App() {
                     <strong>Authors:</strong> {paper.authors?.join(", ") || "N/A"}
                   </p>
                   <p>
-                    <strong>Publication Date:</strong>{" "}
-                    {paper.publication_date || "N/A"} | <strong>Type:</strong>{" "}
-                    {paper.type || "N/A"}
+                    <strong>Publication Date: </strong>
+                    {paper.publication_date || "N/A"} | <strong>Type: </strong>
+                    {paper.type || "N/A"} | <strong>Language: </strong> {paper.language || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Citations: </strong> {paper.cited_by_count || 0} | <strong>FWCI: </strong> {paper.fwci || 0}
                   </p>
                   <p>
                     <strong>Institutions:</strong>{" "}

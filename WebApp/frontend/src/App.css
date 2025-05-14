@@ -48,10 +48,14 @@ input[type=text]:focus {
 }
 
 button {
+  cursor: pointer;
   color: var(--font-white);
   background-color: var(--accent-color);
   border: none;
   border-radius: 6px;
+  &:hover{
+    background-color: var(--accent-light-color);
+  }
 }
 
 .search-button {
@@ -62,6 +66,10 @@ button {
 }
 .search-button:disabled {
   opacity: 0.5;
+}
+
+.sort-reset-button {
+  font-size: 22px;
 }
 
 .container {

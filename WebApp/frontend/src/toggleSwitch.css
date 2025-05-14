@@ -72,7 +72,5 @@
   }
   
   .sort-order-text {
-    min-width: 60px; /* To prevent layout shift */
-    text-align: left;
     font-size: 22px;
 }
