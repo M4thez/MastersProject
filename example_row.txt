@@ -1,2 +1,0 @@
-affiliations	cited_by_count	last_known_insitution	orcid	scopus	summary_stats	works_count	concepts	openalex_id	university_key
-[{'institution': {'country_code': 'GR', 'display_name': 'University of Patras', 'id': 'https://openalex.org/I174878644', 'lineage': array(['https://openalex.org/I174878644'], dtype=object), 'ror': 'https://ror.org/017wvtq80', 'type': 'funder'}, 'years': array([2016])}]	15	[]			[]	1	[]		GR_UOP
