@@ -40,13 +40,13 @@ app.post('/api/search', async (req, res) => {
             papers_by_type: {
                 terms: {
                     field: "type",
-                    size: 10 // Adjust the size as needed
+                    size: 20
                 }
             },
             papers_by_university: {
                 terms: {
                     field: "university_key",
-                    size: 13 // Adjust the size as needed
+                    size: 20
                 }
             }
         }
