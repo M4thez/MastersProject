@@ -73,7 +73,7 @@ def create_opensearch_client():
         return None
 
 
-def define_opensearch_mapping():
+def define_works_mapping():
     """Defines the OpenSearch index mapping."""
 
     return {
@@ -410,7 +410,7 @@ def main():
         sys.exit(1)
 
     # --- Stage 2: Define Index Mapping and Create Index ---
-    mapping = define_opensearch_mapping()
+    mapping = define_works_mapping()
     if not create_opensearch_index(opensearch_client, INDEX_NAME, mapping):
         logging.error("Failed to create OpenSearch index. Exiting.")
         sys.exit(1)
