@@ -6,9 +6,7 @@ load_dotenv()
 
 # FILE/INDEX Names
 PARQUET_FILE_PATH = 'authors_raw_data.parquet'
-# INDEX_NAME = 'university_authors'
-INDEX_NAME = 'university_authors_test'
-
+INDEX_NAME = 'university_authors'
 
 def define_authors_mapping():
     """Defines the OpenSearch index mapping."""

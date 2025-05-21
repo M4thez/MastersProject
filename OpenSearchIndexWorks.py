@@ -6,9 +6,7 @@ load_dotenv()
 
 # FILE/INDEX Names
 PARQUET_FILE_PATH = 'papers_clean2.parquet'
-INDEX_NAME = 'university_works_test'
-# INDEX_NAME = 'university_papers_second'
-
+INDEX_NAME = 'university_papers_second'
 
 def define_works_mapping():
     """Defines the OpenSearch index mapping."""
