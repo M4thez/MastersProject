@@ -1,0 +1,121 @@
+{
+  "West Pomeranian University of Technology in Szczecin": {
+    "names": [
+      "West Pomeranian University of Technology, Szczecin",
+      "West Pomeranian University of Technology in Szczecin",
+      "West Pomeranian University of Technology",
+      "Zachodniopomorski Uniwersytet Technologiczny w Szczecinie",
+      "ZUT",
+      "WPUT"
+    ],
+    "openaire_id": ["openorgs____::b8aa0bcfdbbd23a45201d751f16bef7d"]
+  },
+  "University Le Havre Normandie": {
+    "names": [
+      "Université Le Havre Normandie",
+      "Le Havre Normandy University",
+      "University of Le Havre Normandie",
+      "University of Le Havre",
+      "Université Le Havre",
+      "ULHN"
+    ],
+    "openaire_id": ["openorgs____::c6191379d983db69c888627ec029093f"]
+  },
+  "EMUNI University": {
+    "names": [
+      "Euro-Mediterranean University",
+      "Euro Mediterranean University",
+      "Evro-sredozemska univerza",
+      "Université Euro-Méditerranéenne EMUNI",
+      "EMUNI",
+      "Emuni University",
+      "EMUNI univerza",
+      "Université EMUNI"
+    ],
+    "openaire_id": ["openorgs____::b7574109c515903acfd8c9320fe226e1"]
+  },
+  "Burgas Free University": {
+    "names": [
+      "Burgas Free University",
+      "Бургаски свободен университет"
+    ],
+    "openaire_id": ["openorgs____::d48d5493a55f0274471fcfbd9ca2a79c"]
+  },
+  "University of Dubrovnik": {
+    "names": [
+      "University of Dubrovnik",
+      "Sveučilište u Dubrovniku",
+      "Universitas Studiorum Ragusina",
+      "UNIDU"
+    ],
+    "openaire_id": ["openorgs____::6821d90b67e3605a59aeb0bd9cbde980"]
+  },
+  "University of Patras": {
+    "names": [
+      "University of Patras",
+      "Πανεπιστήμιο Πατρών",
+      "Patras University",
+      "UPatras",
+      "ΠΠ"
+    ],
+    "openaire_id": ["openorgs____::4ac562f0376fce3539504567649cb373"]
+  },
+  "University of Sassari": {
+    "names": [
+      "University of Sassari",
+      "Università degli Studi di Sassari"
+    ],
+    "openaire_id": ["openorgs____::8d77c0a4d811f636c1be7ac7c6eca4e7", "pending_org_::4f2ff19d15d6ac1732a965a6297d325b"]
+  },
+  "University of the Azores": {
+    "names": [
+      "University of the Azores",
+      "Universidade dos Açores"
+    ],
+    "openaire_id": ["openorgs____::ac452db7f67aaf669dec1c432732baaf", "pending_org_::990c3ba84d2ddd44c470b867e7caf6d8"]
+  },
+  "University of the Balearic Islands": {
+    "names": [
+      "University of the Balearic Islands",
+      "Universitat de les Illes Balears",
+      "Universidad de las Islas Baleares",
+      "UIB"
+    ],
+    "openaire_id": ["openorgs____::ec73e8190abe0bddce02cdae8fcb6814"]
+  },
+  "Stralsund University of Applied Sciences": {
+    "names": [
+      "Stralsund University of Applied Sciences",
+      "Hochschule Stralsund",
+      "University of Applied Science Stralsund"
+    ],
+    "openaire_id": ["openorgs____::ab60d6f621023ebb004895aa16e9094d","pending_org_::449f5b20f53aea605b778b934c2ff107"]
+  },
+  "University of the French West Indies": {
+    "names": [
+      "University of the French Antilles",
+      "Université des Antilles",
+      "University of the French West Indies"
+    ],
+    "openaire_id": ["openorgs____::41bca09e4d12d5742e9c03abc779edfd"]
+  },
+  "Åland University of Applied Sciences": {
+    "names": [
+      "Åland University of Applied Sciences",
+      "Aland University of Applied Sciences",
+      "Högskolan på Åland",
+      "HÅ",
+      "Åland UAS",
+      "ÅUAS"
+    ],
+    "openaire_id": ["openorgs____::0cc1ade24fb4433270d814dae41f82c7"]
+  },
+  "University of the Faroe Islands": {
+    "names": [
+      "University of the Faroe Islands",
+      "Fróðskaparsetur Føroya",
+      "Færøernes Universitet"
+    ],
+    "openaire_id": ["openorgs____::cd522f6c6c75e1a2c2ac310a421f2e33"]
+  }
+}
