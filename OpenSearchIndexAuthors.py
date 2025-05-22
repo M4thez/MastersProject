@@ -5,8 +5,9 @@ import OpenSearchIndexing
 load_dotenv()
 
 # FILE/INDEX Names
-PARQUET_FILE_PATH = 'authors_raw_data.parquet'
-INDEX_NAME = 'university_authors'
+PARQUET_FILE_PATH = 'authors_clean_data.parquet'
+INDEX_NAME = 'university_authors_second'
+
 
 def define_authors_mapping():
     """Defines the OpenSearch index mapping."""
