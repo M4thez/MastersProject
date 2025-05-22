@@ -27,7 +27,7 @@ function App() {
 
   const performPapersSearch = useCallback(
     async (pageToFetch = 1) => {
-      full_url = BACKEND_BASE_URL + "papers";
+      const full_url = BACKEND_BASE_URL + "papers";
       setLoading(true);
       setError(null);
       setCurrentPage(pageToFetch);
@@ -38,7 +38,7 @@ function App() {
       // Add more filters here
 
       try {
-        const response = await axios.post(BACKEND_BASE_URL, {
+        const response = await axios.post(full_url, {
           queryText: queryText,
           filters: filters,
           page: pageToFetch,
