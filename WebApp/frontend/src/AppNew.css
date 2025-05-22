@@ -1,0 +1,163 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: var(--background-75-color);
+  padding: 30px;
+  text-align: center;
+  margin: 20px;
+}
+
+.search-results-header {
+  margin: 2px;
+}
+
+.search-form {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.search-input {
+  padding: 10px;
+  font-size: 16px;
+  color: var(--font-white);
+  background-color: var(--background-50-color);
+  border: 1px solid var(--background-25-color);
+  border-radius: 6px;
+  width: 60%;
+  min-height: 46px;
+  max-width: 500px;
+}
+
+input[type=text]:focus {
+   outline:2px solid var(--accent-color);
+}
+
+.search-info {
+  display:flex;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+    
+  min-height: 40px;
+}
+
+button {
+  cursor: pointer;
+  color: var(--font-white);
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 6px;
+  &:hover{
+    background-color: var(--accent-light-color);
+  }
+}
+
+.search-button {
+  padding: 10px;
+  font-size: 16px;
+  min-width: 120px;
+  cursor: pointer;
+}
+.search-button:disabled {
+  opacity: 0.5;
+}
+
+.reset-button {
+  font-size: 22px;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-50-color);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 10px;
+  gap: 12px;
+  & h3,h4 {
+    margin: 4px;
+    padding: 0;
+  }
+}
+
+.filters-header {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.filter-single select {
+  min-width: 30%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.results-main {
+  flex-grow: 1;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.paper-item {
+  width: 80%;
+  border: 2px solid var(--background-50-color);
+  padding: 15px;
+  border-radius: 6px;
+  background-color:var(--background-75-color);
+}
+
+.paper-item h3 {
+  margin-top: 0;
+}
+.paper-item h3 a {
+  color: var(--accent-light-color);
+  text-decoration: none;
+}
+.paper-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.paper-item p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: var(--font-white);
+}
+
+
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+@media screen and (min-width: 1000px) {
+  .paper-item {
+    width: 50%;
+  }
+}
