@@ -13,7 +13,8 @@ app.use(express.json());
 async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pageSize, sortBy, defaultSortField, defaultSortOrder = "desc") {
     const from = (page - 1) * pageSize;
     console.log(`Executing search on index '${targetIndex}':`, { queryText, filters, page, pageSize, sortBy });
-
+    console.log('AAA', targetIndex);
+    console.log('BBB',process.env.OPENSEARCH_PAPERS_INDEX,process.env.OPENSEARCH_AUTHORS_INDEX,process.env.OPENSEARCH_PROJECTS_INDEX);
     const hasQueryText = queryText && queryText.trim() !== "";
     const hasFilters = Object.keys(filters).length > 0;
 
@@ -37,19 +38,20 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
         } else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
             searchFields = ["display_name^3", "display_name_alternatives^2", "x_concepts.display_name^1.5", "last_known_institutions.display_name"];
         } else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-            searchFields = ["title^3", "summary^2", "acronym^1.5", "subjects.keyword^1.2"]; // Assuming subjects.keyword exists
+            searchFields = ["title^3", "summary^2", "acronym^1.5", "subjects^1.2"];
         }
         if (searchFields.length > 0) {
             osQueryBody.query.bool.must.push({
                 multi_match: { query: queryText, fields: searchFields, fuzziness: "AUTO" }
             });
         } else { // Fallback if no specific fields for an unknown index (shouldn't happen with defined endpoints)
+            console.log('FALLABACK CASE');
             osQueryBody.query.bool.must.push({ simple_query_string: { query: queryText, default_operator: "AND" } });
         }
     } else {
         osQueryBody.query.bool.must.push({ match_all: {} });
-        if (!hasFilters && (targetIndex === process.env.OPENSEARCH_PAPERS_INDEX || targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX)) {
-            // For initial load of papers/projects, fetch only aggregations
+        if (!hasFilters && (targetIndex === process.env.OPENSEARCH_PAPERS_INDEX || targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX || targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX)) {
+            // For initial load of papers/projects/authors, fetch only aggregations
             osQueryBody.size = 0;
         }
     }
@@ -57,53 +59,53 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
     // 2. Aggregations (specific to index type)
     if (targetIndex === process.env.OPENSEARCH_PAPERS_INDEX) {
         osQueryBody.aggs = {
-            papers_by_year: { terms: { field: "publication_year", size: 20 } },
+            papers_by_date: { terms: { field: "publication_date", size: 20 } },
             papers_by_type: { terms: { field: "type", size: 20 } },
             papers_by_university: { terms: { field: "university_key", size: 20 } }
         };
     } else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
         osQueryBody.aggs = {
-            authors_by_university: { terms: { field: "university_key.keyword", size: 20 } }, // Ensure .keyword
-            authors_by_lki_type: { // Assuming last_known_institutions is nested and type has a keyword subfield
+            authors_by_university: { terms: { field: "university_key", size: 20 } },
+            authors_by_lki_type: {
                 nested: { path: "last_known_institutions" },
-                aggs: { types: { terms: { field: "last_known_institutions.type.keyword", size: 10 } } }
+                aggs: { types: { terms: { field: "last_known_institutions.type", size: 10 } } }
             }
         };
     } else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-        osQueryBody.aggs = {
-            projects_by_status: { terms: { field: "status.keyword", size: 10 } }, // Example: Assuming 'status' field exists and is keyword
-            projects_by_funder: { // Assuming fundings is nested
-                nested: { path: "fundings" },
-                aggs: { funders: { terms: { field: "fundings.name.keyword", size: 10 } } }
-            },
-            projects_by_year: { terms: { field: "startDate", format: "yyyy", date_histogram: { field: "startDate", calendar_interval: "year", format: "yyyy" }, size: 10 } }
+        // osQueryBody.aggs = {
+        //     projects_by_funder: {
+        //         nested: { path: "fundings" },
+        //         aggs: { funders: { terms: { field: "fundings.name", size: 10 } } }
+        //     },
+        //     projects_by_year: { terms: { field: "startDate", format: "yyyy", size: 10 } }
 
-        };
+        // };
     }
 
 
     // 3. Filters (specific to index type)
     if (targetIndex === process.env.OPENSEARCH_PAPERS_INDEX) {
-        if (filters.publication_year) osQueryBody.query.bool.filter.push({ term: { publication_year: filters.publication_year } });
+        if (filters.publication_year) osQueryBody.query.bool.filter.push({ term: { publication_year: filters.publication_date } });
         if (filters.type) osQueryBody.query.bool.filter.push({ term: { type: filters.type } });
-        if (filters.university) osQueryBody.query.bool.filter.push({ term: { "university_key.keyword": filters.university } }); // Ensure .keyword if needed
-    } else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
-        if (filters.university) osQueryBody.query.bool.filter.push({ term: { "university_key.keyword": filters.university } }); // Ensure .keyword
+        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } }); 
+    } 
+    else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
+        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } });
         if (filters.lki_type) {
             osQueryBody.query.bool.filter.push({
                 nested: {
                     path: "last_known_institutions",
-                    query: { term: { "last_known_institutions.type.keyword": filters.lki_type } }
+                    query: { term: { "last_known_institutions.type": filters.lki_type } }
                 }
             });
         }
-    } else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-        if (filters.status) osQueryBody.query.bool.filter.push({ term: { "status.keyword": filters.status } }); // Ensure .keyword
-        if (filters.funder_name) { // Example filter for funder
+    }
+     else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
+        if (filters.funder_name) { 
             osQueryBody.query.bool.filter.push({
                 nested: {
                     path: "fundings",
-                    query: { term: { "fundings.name.keyword": filters.funder_name } }
+                    query: { term: { "fundings.name": filters.funder_name } }
                 }
             });
         }
@@ -147,6 +149,8 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
 app.post('/api/search/papers', async (req, res) => {
     const { queryText, filters = {}, page = 1, pageSize = 10, sortBy = null } = req.body;
     try {
+
+        console.log('aaa',process.env.OPENSEARCH_PAPERS_INDEX);
         const responseData = await executeOpenSearchQuery(
             process.env.OPENSEARCH_PAPERS_INDEX,
             queryText, filters, page, pageSize, sortBy,
@@ -166,7 +170,7 @@ app.post('/api/search/authors', async (req, res) => {
         const responseData = await executeOpenSearchQuery(
             process.env.OPENSEARCH_AUTHORS_INDEX,
             queryText, filters, page, pageSize, sortBy,
-            "display_name.keyword", "asc" // Default sort field and order for authors
+            "display_name", "asc" // Default sort field and order for authors
         );
         res.json(responseData);
     } catch (error) {

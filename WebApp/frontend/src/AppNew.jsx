@@ -10,7 +10,7 @@ const BACKEND_BASE_URL = "http://82.145.73.10:3001/api/search/"; // Node.js back
 // Define default sort options for each type
 const defaultSortOptions = {
   papers: { field: "_score", order: "desc" },
-  authors: { field: "display_name.keyword", order: "asc" }, // Example
+  authors: { field: "display_name", order: "asc" }, // Example
   projects: { field: "startDate", order: "desc" }, // Example
 };
 
@@ -48,22 +48,20 @@ function App() {
     funder_name: "",
   }); // Example
 
-  // const [selectedType, setSelectedType] = useState("");
-  // const [selectedUniversity, setSelectedUniversity] = useState("");
 
   const performSearch = useCallback(
-    async (pageToFetch = 1, currentSearchType = searchType) => {
+    async (textToSearch, pageToFetch = 1, currentSearchType = searchType) => {
       setLoading(true);
       setError(null);
       setCurrentPage(pageToFetch);
 
-      // const full_url = BACKEND_BASE_URL + "papers";
       let endpoint = `${BACKEND_BASE_URL}${currentSearchType}`;
       let currentActiveFilters = {};
       let sortByPayload = null;
 
       switch (currentSearchType) {
         case "papers":
+          console.log("SWITCH papers");
           currentActiveFilters = {
             ...(paperFilters.type && { type: paperFilters.type }),
             ...(paperFilters.university_key && {
@@ -75,6 +73,7 @@ function App() {
             : defaultSortOptions.papers;
           break;
         case "authors":
+          console.log("SWITCH authors");
           currentActiveFilters = {
             ...(authorFilters.university_key && {
               university: authorFilters.university_key,
@@ -86,6 +85,7 @@ function App() {
             : defaultSortOptions.authors;
           break;
         case "projects":
+          console.log("SWITCH projects");
           currentActiveFilters = {
             ...(projectFilters.status && { status: projectFilters.status }),
             ...(projectFilters.funder_name && {
@@ -103,7 +103,7 @@ function App() {
 
       try {
         const response = await axios.post(endpoint, {
-          queryText: queryText,
+          queryText: textToSearch,
           filters: currentActiveFilters,
           page: pageToFetch,
           pageSize: pageSize,
@@ -127,7 +127,6 @@ function App() {
       }
     },
     [
-      queryText,
       pageSize,
       searchType,
       selectedSort,
@@ -140,8 +139,8 @@ function App() {
 
   // Initial search or when query/filters change
   useEffect(() => {
-    performSearch(1, searchType); // Fetch first page on initial load or filter change
-  }, [performSearch, searchType]); // Re-run if performSearch function identity changes (due to its deps)
+    performSearch(queryText, 1, searchType); // Fetch first page on initial load or filter change
+  }, [performSearch]);
 
   // Effect to reset sort and filters when searchType changes
   useEffect(() => {
@@ -165,12 +164,13 @@ function App() {
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    setQueryText(event.target[0].value);
-    performSearch(1, searchType); // Reset to first page on new search
+    const textInput = event.target[0].value;
+    setQueryText(textInput);
+    performSearch(textInput, 1, searchType); // Reset to first page on new search
   };
 
   const handlePageChange = (newPage) => {
-    performSearch(newPage, searchType);
+    performSearch(queryText,newPage, searchType);
   };
 
   // --- Helper to render aggregations---
@@ -245,7 +245,7 @@ function App() {
         <label htmlFor="sortFieldSelect">Sort by:</label>
         <select
           id="sortFieldSelect"
-          value={selectedSortField}
+          value={selectedSort}
           onChange={(e) => setSelectedSort(e.target.value)}
         >
           {currentSortOptions.map((opt) => (
@@ -507,14 +507,6 @@ function App() {
                 setPaperFilters,
                 universitiesNameMap
               )}
-              {/* Add paper-specific year filter if needed, e.g., using a different agg name */}
-              {renderAggregation(
-                "papers_by_year",
-                "Year",
-                paperFilters.year,
-                "year",
-                setPaperFilters
-              )}
             </>
           )}
           {searchType === "authors" && (
@@ -539,65 +531,39 @@ function App() {
           )}
           {searchType === "projects" && (
             <>
-              {renderAggregation(
-                "projects_by_status",
-                "Status",
-                projectFilters.status,
-                "status",
-                setProjectFilters
-              )}
-              {renderAggregation(
+              {/* {renderAggregation(
                 "projects_by_funder",
                 "Funder",
                 projectFilters.funder_name,
                 "funder_name",
                 setProjectFilters
-              )}
-              {/* You might need a different renderAggregation for date_histogram like project years */}
-              {renderAggregation(
-                "projects_by_year_corrected",
-                "Start Year",
-                projectFilters.startYear,
-                "startYear",
-                setProjectFilters
-              )}
+              )} */}
             </>
           )}
         </div>
 
         <div className="search-info">
           {error && <span className="error-message">Error: {error}</span>}
-          {!loading && totalHits > 0 && results.length > 0 && (
-            <span>
-              Found <strong>{totalHits}</strong> results.
-            </span>
-          )}
+          {loading && results.length === 0 && <p>Loading...</p>}
           {!loading && totalHits === 0 && !error && (
             <span>
-              No results found.{" "}
-              {(selectedType || selectedUniversity) &&
-                "Applied filters: " + selectedType + " " + selectedUniversity}
+              No results found for "{queryText}"
+              {searchType === "papers" &&
+                (paperFilters.type || paperFilters.university_key) &&
+                " with applied paper filters."}
+              {searchType === "authors" &&
+                (authorFilters.university_key || authorFilters.lki_type) &&
+                " with applied author filters."}
+              {searchType === "projects" &&
+                (projectFilters.status || projectFilters.funder_name) &&
+                " with applied project filters."}
             </span>
           )}
         </div>
       </header>
 
       <main className="results-main">
-        {loading && results.length === 0 && <p>Loading...</p>}
-        {!loading && totalHits === 0 && !error && (
-          <span>
-            No results found for "{queryText}"
-            {searchType === "papers" &&
-              (paperFilters.type || paperFilters.university_key) &&
-              " with applied paper filters."}
-            {searchType === "authors" &&
-              (authorFilters.university_key || authorFilters.lki_type) &&
-              " with applied author filters."}
-            {searchType === "projects" &&
-              (projectFilters.status || projectFilters.funder_name) &&
-              " with applied project filters."}
-          </span>
-        )}
+
         {results.length > 0 && (
           <div className="results-list">
             <h2 className="search-results-header">
