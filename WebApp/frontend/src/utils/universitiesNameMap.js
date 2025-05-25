@@ -1,6 +1,6 @@
 // Mapping from university_key to full university name
 const universitiesNameMap = {
-    'PL_ZUT': 'West Pomeranian University of Technology in Szczecin',
+    'PL_ZUT': 'West Pomeranian University of Technology',
     'BG_BFU': 'Burgas Free University',
     'GR_UOP': 'University of Patras',
     'HR_UNIDU': 'University of Dubrovnik',

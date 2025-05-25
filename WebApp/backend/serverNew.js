@@ -66,20 +66,16 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
     } else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
         osQueryBody.aggs = {
             authors_by_university: { terms: { field: "university_key", size: 20 } },
+            // REMOVE BELOW
             authors_by_lki_type: {
                 nested: { path: "last_known_institutions" },
                 aggs: { types: { terms: { field: "last_known_institutions.type", size: 10 } } }
             }
         };
     } else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-        // osQueryBody.aggs = {
-        //     projects_by_funder: {
-        //         nested: { path: "fundings" },
-        //         aggs: { funders: { terms: { field: "fundings.name", size: 10 } } }
-        //     },
-        //     projects_by_year: { terms: { field: "startDate", format: "yyyy", size: 10 } }
-
-        // };
+        osQueryBody.aggs = {
+            projects_by_university: {terms: {field: "university_key", size: 20}}
+        };
     }
 
 
@@ -91,6 +87,7 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
     } 
     else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
         if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } });
+        // REMOVE
         if (filters.lki_type) {
             osQueryBody.query.bool.filter.push({
                 nested: {
@@ -101,19 +98,7 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
         }
     }
      else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-        if (filters.funder_name) { 
-            osQueryBody.query.bool.filter.push({
-                nested: {
-                    path: "fundings",
-                    query: { term: { "fundings.name": filters.funder_name } }
-                }
-            });
-        }
-        if (filters.startYear) { // Example filter for project start year
-            osQueryBody.query.bool.filter.push({
-                range: { "startDate": { gte: `${filters.startYear}-01-01`, lte: `${filters.startYear}-12-31`, format: "yyyy-MM-dd" } }
-            });
-        }
+        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } }); 
     }
 
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./App.css";
 import "./variables.css";
-import "./toggleSwitch.css";
+import "./sortOrder.css";
 import universitiesNameMap from "./utils/universitiesNameMap";
 
 const BACKEND_URL = "http://82.145.73.10:3001/api/search"; // Node.js backend URL

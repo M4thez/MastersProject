@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./App.css";
 import "./variables.css";
-import "./toggleSwitch.css";
+import "./sortOrder.css";
 import universitiesNameMap from "./utils/universitiesNameMap";
 
 const BACKEND_BASE_URL = "http://82.145.73.10:3001/api/search/"; // Node.js backend URL
@@ -10,8 +10,8 @@ const BACKEND_BASE_URL = "http://82.145.73.10:3001/api/search/"; // Node.js back
 // Define default sort options for each type
 const defaultSortOptions = {
   papers: { field: "_score", order: "desc" },
-  authors: { field: "display_name", order: "asc" }, // Example
-  projects: { field: "startDate", order: "desc" }, // Example
+  authors: { field: "_score", order: "desc" }, // Example
+  projects: { field: "_score", order: "desc" }, // Example
 };
 
 function App() {
@@ -41,12 +41,10 @@ function App() {
   });
   const [authorFilters, setAuthorFilters] = useState({
     university_key: "",
-    lki_type: "",
-  }); // Example
+  }); 
   const [projectFilters, setProjectFilters] = useState({
-    status: "",
-    funder_name: "",
-  }); // Example
+    university_key: "",
+  });
 
 
   const performSearch = useCallback(
@@ -76,9 +74,8 @@ function App() {
           console.log("SWITCH authors");
           currentActiveFilters = {
             ...(authorFilters.university_key && {
-              university: authorFilters.university_key,
+              university_key: authorFilters.university_key,
             }),
-            ...(authorFilters.lki_type && { lki_type: authorFilters.lki_type }),
           };
           sortByPayload = selectedSort
             ? { field: selectedSort, order: sortOrder }
@@ -87,10 +84,9 @@ function App() {
         case "projects":
           console.log("SWITCH projects");
           currentActiveFilters = {
-            ...(projectFilters.status && { status: projectFilters.status }),
-            ...(projectFilters.funder_name && {
-              funder_name: projectFilters.funder_name,
-            }),
+            ...(projectFilters.university_key && {
+              university_key: projectFilters.university_key
+            })
           };
           sortByPayload = selectedSort
             ? { field: selectedSort, order: sortOrder }
@@ -152,13 +148,12 @@ function App() {
 
     // Reset filters for each type
     setPaperFilters({ type: "", university_key: "" });
-    setAuthorFilters({ university_key: "", lki_type: "" }); // Reset specific author filters
-    setProjectFilters({ status: "", funder_name: "" }); // Reset specific project filters
+    setAuthorFilters({ university_key: "" }); // Reset specific author filters
+    setProjectFilters({ university_key: "" }); // Reset specific project filters
 
     // Set default sort for the new type
     setSelectedSort(defaultSortOptions[searchType].field);
     setSortOrder(defaultSortOptions[searchType].order);
-
     // performSearch will be called by the effect below due to searchType change
   }, [searchType]);
 
@@ -170,7 +165,7 @@ function App() {
   };
 
   const handlePageChange = (newPage) => {
-    performSearch(queryText,newPage, searchType);
+    performSearch(queryText, newPage, searchType);
   };
 
   // --- Helper to render aggregations---
@@ -293,7 +288,6 @@ function App() {
             <a
               href={item.doi || item.oa_url || "#"}
               target="_blank"
-              rel="noopener noreferrer"
             >
               {item.title || "No Title"}
             </a>
@@ -342,19 +336,12 @@ function App() {
     } else if (searchType === "authors") {
       return (
         <div key={item.id} className="author-item paper-item">
-          {" "}
-          {/* Reuse paper-item style or create author-item */}
-          <h3>{item.display_name || "No Name"}</h3>
-          <p>
-            <strong>ORCID:</strong>{" "}
-            {item.orcid ? (
-              <a href={item.orcid} target="_blank" rel="noopener noreferrer">
-                {item.orcid}
-              </a>
-            ) : (
-              "N/A"
-            )}
-          </p>
+          <h3>
+            {item.id ? (
+              <a href={item.id} target="_blank">
+                {item.display_name || "No Name"}
+              </a>) : item.display_name || "No Name"}
+          </h3>
           <p>
             <strong>Works:</strong> {item.works_count || 0} |{" "}
             <strong>Cited By:</strong> {item.cited_by_count || 0}
@@ -365,8 +352,11 @@ function App() {
           </p>
           <p>
             <strong>Last Known Uni:</strong>{" "}
-            {item.last_known_institutions?.[0]?.display_name || "N/A"} (
-            {item.university_key || "N/A"})
+            {item.last_known_institutions?.[0]?.display_name || "N/A"}
+          </p>
+          <p>
+            <strong>EUNCoast University: </strong>
+            {universitiesNameMap[item.university_key]}
           </p>
           {item.x_concepts && item.x_concepts.length > 0 && (
             <p>
@@ -408,6 +398,10 @@ function App() {
             </p> // Adjust if name is object
           )}
           <p>
+            <strong>EUNCoast University: </strong>
+            {universitiesNameMap[item.university_key]}
+          </p>
+          <p>
             <strong>Summary: </strong>
             {item.summary ? `${item.summary.substring(0, 300)}...` : "--"}
           </p>
@@ -439,7 +433,7 @@ function App() {
           <button
             onClick={() => setSearchType("authors")}
             className={searchType === "authors" ? "search-type-active" : ""}
-         >
+          >
             Authors
           </button>
           <button
@@ -481,9 +475,9 @@ function App() {
                 if (searchType === "papers")
                   setPaperFilters({ type: "", university_key: "" });
                 else if (searchType === "authors")
-                  setAuthorFilters({ university_key: "", lki_type: "" });
+                  setAuthorFilters({ university_key: "" });
                 else if (searchType === "projects")
-                  setProjectFilters({ status: "", funder_name: "" });
+                  setProjectFilters({ university_key: ""});
               }}
             >
               ↺
@@ -519,24 +513,18 @@ function App() {
                 setAuthorFilters,
                 universitiesNameMap
               )}
-              {renderAggregation(
-                "authors_by_lki_type",
-                "Institution Type",
-                authorFilters.lki_type,
-                "lki_type",
-                setAuthorFilters
-              )}
             </>
           )}
           {searchType === "projects" && (
             <>
-              {/* {renderAggregation(
-                "projects_by_funder",
-                "Funder",
-                projectFilters.funder_name,
-                "funder_name",
-                setProjectFilters
-              )} */}
+              {renderAggregation(
+                "projects_by_university",
+                "University",
+                projectFilters.university_key,
+                "university_key",
+                setProjectFilters,
+                universitiesNameMap
+              )}
             </>
           )}
         </div>
@@ -551,10 +539,10 @@ function App() {
                 (paperFilters.type || paperFilters.university_key) &&
                 " with applied paper filters."}
               {searchType === "authors" &&
-                (authorFilters.university_key || authorFilters.lki_type) &&
+                (authorFilters.university_key) &&
                 " with applied author filters."}
               {searchType === "projects" &&
-                (projectFilters.status || projectFilters.funder_name) &&
+                (projectFilters.university_key) &&
                 " with applied project filters."}
             </span>
           )}
