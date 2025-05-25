@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import "./AppNew.css";
+import "./App.css";
 import "./variables.css";
 import "./toggleSwitch.css";
 import universitiesNameMap from "./utils/universitiesNameMap";
@@ -429,22 +429,22 @@ function App() {
       <header className="App-header">
         <h1>EUNICoast Search Engine</h1>
         {/* --- Search Type Selector --- */}
-        <div className="search-type-selector">
+        <div className="search-types">
           <button
             onClick={() => setSearchType("papers")}
-            className={searchType === "papers" ? "active" : ""}
+            className={searchType === "papers" ? "search-type-active" : ""}
           >
             Papers
           </button>
           <button
             onClick={() => setSearchType("authors")}
-            className={searchType === "authors" ? "active" : ""}
-          >
+            className={searchType === "authors" ? "search-type-active" : ""}
+         >
             Authors
           </button>
           <button
             onClick={() => setSearchType("projects")}
-            className={searchType === "projects" ? "active" : ""}
+            className={searchType === "projects" ? "search-type-active" : ""}
           >
             Projects
           </button>
@@ -454,7 +454,6 @@ function App() {
           <input
             type="text"
             key={searchType} // Add key to force re-render and clear input on searchType change
-            // value={queryText} // Make it controlled if you prefer
             placeholder={`Search ${searchType}...`}
             className="search-input"
           />
@@ -582,8 +581,7 @@ function App() {
               &#9664;
             </button>
             <span>
-              {" "}
-              Page {currentPage} of {totalPages}{" "}
+              Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}

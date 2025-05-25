@@ -68,6 +68,28 @@ button {
   opacity: 0.5;
 }
 
+.search-types {
+  display: flex;
+  justify-content: center;
+  > button {
+    border-radius: 0;
+    font-size: 16px;
+    padding: 8px;
+    opacity: 0.8;
+    &:nth-child(1){
+      border-radius: 6px 0 0 6px;
+    }
+    &:nth-last-child(1){
+      border-radius: 0 6px 6px 0;
+    }
+  }
+}
+
+button.search-type-active  {
+  opacity: 1;
+}
+
+
 .reset-button {
   font-size: 22px;
 }
@@ -135,15 +157,15 @@ button {
   color: var(--font-white);
 }
 
-
-
 .pagination {
-  margin-top: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px;
 }
 .pagination button {
-  padding: 8px 12px;
-  margin: 0 5px;
+  padding: 8px 10px;
   cursor: pointer;
 }
 .pagination button:disabled {
