@@ -546,6 +546,9 @@ function App() {
                 " with applied project filters."}
             </span>
           )}
+          {!loading && totalHits > 0 && results.length > 0 && (
+            <p>Found {totalHits} results.</p>
+          )}
         </div>
       </header>
 

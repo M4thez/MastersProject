@@ -39,10 +39,18 @@ To enter OpenSearch Dashboard: <br>
 (Behind firewall)
 VM_IP:5601
 
+### Docker
+In the case of stopped docker containers with OpenSearch restart them in a directory with docker compose file with:<br>
+docker compose restart 
+<br>
+
+check the status with:<br>
+docker ps -a
+
 ### Runnning front and backend
 
 To get any current git changes:<br>
-git fetch
+git fetch<br>
 git pull
 
 Backend:<br>
