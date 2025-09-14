@@ -6,7 +6,10 @@ Repository for the Master's degree project by Mateusz Boboryko
 
 ### Run the web app via a single command
 
+First run <i>npm install</i> in the backend and frontend directories then
+
 <i>./start_webapp.sh</i>
+
 
 ### Python venv - virtual environment
 
@@ -55,13 +58,14 @@ git pull
 
 Backend:<br>
 cd MastersProject/WebApp/backend
+npm install
 node server.js
 
 Frontend:<br>
 cd MastersProject/WebApp/frontend
+npm install
 npm run dev
 
-## Links used
 
 ### Connecting with OpenSearch via Python library OpenSearch-py
 
