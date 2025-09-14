@@ -45,7 +45,7 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
                 multi_match: { query: queryText, fields: searchFields, fuzziness: "AUTO" }
             });
         } else { // Fallback if no specific fields for an unknown index (shouldn't happen with defined endpoints)
-            console.log('FALLABACK CASE');
+            console.log('FALLBACK CASE');
             osQueryBody.query.bool.must.push({ simple_query_string: { query: queryText, default_operator: "AND" } });
         }
     } else {
@@ -117,9 +117,11 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
             index: targetIndex,
             body: osQueryBody
         });
+        console.log("OpenSearch results:", result);
         return {
             hits: result.body.hits.hits.map(hit => ({ id: hit._id, ...hit._source, score: hit._score })),
             total: result.body.hits.total.value,
+            took: result.body.took,
             aggregations: result.body.aggregations || {}
         };
     } catch (error) {

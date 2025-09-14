@@ -106,6 +106,7 @@ function App() {
           sortBy: sortByPayload,
         });
         console.log(`${currentSearchType} Search response:`, response.data);
+        console.log(">>> Search took "+ response.data.took +"ms <<<");
 
         setResults(response.data.hits);
         setTotalHits(response.data.total);
