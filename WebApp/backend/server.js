@@ -14,13 +14,14 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
     const from = (page - 1) * pageSize;
     console.log(`Executing search on index '${targetIndex}':`, { queryText, filters, page, pageSize, sortBy });
     console.log('AAA', targetIndex);
-    console.log('BBB',process.env.OPENSEARCH_PAPERS_INDEX,process.env.OPENSEARCH_AUTHORS_INDEX,process.env.OPENSEARCH_PROJECTS_INDEX);
+    console.log('BBB', process.env.OPENSEARCH_PAPERS_INDEX, process.env.OPENSEARCH_AUTHORS_INDEX, process.env.OPENSEARCH_PROJECTS_INDEX);
     const hasQueryText = queryText && queryText.trim() !== "";
     const hasFilters = Object.keys(filters).length > 0;
 
     const osQueryBody = {
         from: from,
         size: pageSize,
+        min_score: 1, // cutoff point for low relevance results
         query: {
             bool: {
                 must: [],
@@ -74,7 +75,7 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
         };
     } else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
         osQueryBody.aggs = {
-            projects_by_university: {terms: {field: "university_key", size: 20}}
+            projects_by_university: { terms: { field: "university_key", size: 20 } }
         };
     }
 
@@ -83,8 +84,8 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
     if (targetIndex === process.env.OPENSEARCH_PAPERS_INDEX) {
         if (filters.publication_year) osQueryBody.query.bool.filter.push({ term: { publication_year: filters.publication_date } });
         if (filters.type) osQueryBody.query.bool.filter.push({ term: { type: filters.type } });
-        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } }); 
-    } 
+        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } });
+    }
     else if (targetIndex === process.env.OPENSEARCH_AUTHORS_INDEX) {
         if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } });
         // REMOVE
@@ -97,8 +98,8 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
             });
         }
     }
-     else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
-        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } }); 
+    else if (targetIndex === process.env.OPENSEARCH_PROJECTS_INDEX) {
+        if (filters.university_key) osQueryBody.query.bool.filter.push({ term: { "university_key": filters.university_key } });
     }
 
 
@@ -136,8 +137,7 @@ async function executeOpenSearchQuery(targetIndex, queryText, filters, page, pag
 app.post('/api/search/papers', async (req, res) => {
     const { queryText, filters = {}, page = 1, pageSize = 10, sortBy = null } = req.body;
     try {
-
-        console.log('aaa',process.env.OPENSEARCH_PAPERS_INDEX);
+        console.log('aaa', process.env.OPENSEARCH_PAPERS_INDEX);
         const responseData = await executeOpenSearchQuery(
             process.env.OPENSEARCH_PAPERS_INDEX,
             queryText, filters, page, pageSize, sortBy,
