@@ -59,7 +59,7 @@ function App() {
 
       switch (currentSearchType) {
         case "papers":
-          console.log("SWITCH papers");
+          // console.log("SWITCH papers");
           currentActiveFilters = {
             ...(paperFilters.type && { type: paperFilters.type }),
             ...(paperFilters.university_key && {
@@ -71,7 +71,7 @@ function App() {
             : defaultSortOptions.papers;
           break;
         case "authors":
-          console.log("SWITCH authors");
+          // console.log("SWITCH authors");
           currentActiveFilters = {
             ...(authorFilters.university_key && {
               university_key: authorFilters.university_key,
@@ -82,7 +82,7 @@ function App() {
             : defaultSortOptions.authors;
           break;
         case "projects":
-          console.log("SWITCH projects");
+          // console.log("SWITCH projects");
           currentActiveFilters = {
             ...(projectFilters.university_key && {
               university_key: projectFilters.university_key
@@ -105,8 +105,14 @@ function App() {
           pageSize: pageSize,
           sortBy: sortByPayload,
         });
-        console.log(`${currentSearchType} Search response:`, response.data);
-        console.log(">>> Search took "+ response.data.took +"ms <<<");
+        if(response.data.hits.length) {
+          console.log(`${currentSearchType} Search response:`, response.data);
+          // Access the 'hits' array and map over it to get only the 'id' of each object
+          const log_ids = response.data.hits.map(item => item.id);
+          // Log the new array of IDs to the console for Jaccard comparison
+          console.log(`>>> Query: "${textToSearch}" took ${response.data.took} ms and returned results:`);
+          console.log(log_ids);
+        }
 
         setResults(response.data.hits);
         setTotalHits(response.data.total);
