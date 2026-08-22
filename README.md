@@ -1,6 +1,12 @@
 # Master's degree project
 
-Repository for the Master's degree project by Mateusz Boboryko
+Repository for the Master's degree project by me - Mateusz Boboryko.
+
+Full-stack web application serving as a specialized search engine for academic outputs (research papers, authors, and projects) affiliated with the EUNICoast university alliance. The project involved designing and implementing a data pipeline to ingest and process scholarly data from APIs like OpenAlex and OpenAIRE. This data was then indexed into a self-hosted OpenSearch instance, with custom mappings created to optimize search relevance.
+
+The backend was built using Node.js and Express.js, providing a RESTful API to handle complex search queries, filtering, sorting, and aggregations. The frontend was developed with React, featuring a dynamic user interface for keyword searching, faceted navigation (by type, university, etc.), pagination, and customizable result sorting. This project demonstrated proficiency in data ingestion, search engine technology, API development, and modern front-end frameworks, culminating in a functional tool for exploring academic contributions within the EUNICoast alliance.
+
+<hr>
 
 ## Useful commands in the project
 
